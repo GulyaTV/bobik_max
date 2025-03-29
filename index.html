@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <title>Бобик Калькулятор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            transition: background-color 0.3s ease;
+        }
+        .calculator {
+            background-color: #000;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            width: 300px;
+            transition: background-color 0.3s ease;
+        }
+        .name {
+            color: white;
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .display {
+            width: 90%;
+            height: 50px;
+            font-size: 24px;
+            text-align: right;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .buttons button {
+            height: 50px;
+            width: 50px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .buttons button.digit {
+            background-color: #808080;
+            color: white;
+        }
+        .buttons button.digit:hover {
+            background-color: #606060;
+            transform: scale(1.05);
+        }
+        .buttons button.operation {
+            background-color: #ff9500;
+            color: white;
+        }
+        .buttons button.operation:hover {
+            background-color: #e08500;
+            transform: scale(1.05);
+        }
+        .buttons button.clear {
+            background-color: #ff3b30;
+            color: white;
+        }
+        .buttons button.clear:hover {
+            background-color: #e03028;
+            transform: scale(1.05);
+        }
+        .nose-mode {
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        .nose-mode canvas {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        .mode-toggle {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+        .mode-toggle button {
+            height: 55px;
+            width: 60px;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-left: 5px;
+        }
+        .barkgpt-maths {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ai-mode button {
+            margin-top: 10px;
+        }
+        .mode-toggle button.active {
+            background-color: #45a049;
+        }
+        .mode-toggle button:hover {
+            transform: scale(1.05);
+        }
+        .result-container {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            transition: color 0.3s ease;
+        }
+        .nose-mode button {
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+        .nose-mode button.active {
+            background-color: #45a049;
+        }
+        .nose-mode button:hover {
+            transform: scale(1.05);
+        }
+        .teeth-mode button {
+            height: 50px;
+            width: 50px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .beta-badge {
+            background-color: #ff5722;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 8px;
+            position: absolute;
+            margin-top: -35px;
+            margin-left: -10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .chat-container {
+            display: none;
+            margin-top: 20px;
+            color: white;
+        }
+        .chat-container input {
+            width: 80%;
+            height: 30px;
+            font-size: 16px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .chat-container button {
+            height: 40px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .chat-container button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .chat-messages {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .ai-mode .chat-container {
+            display: block;
+        }
+        /* Медиа-запросы для адаптации под мобильные устройства */
+        @media (max-width: 768px) {
+            .calculator {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .name {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .display {
+                height: 50px;
+                font-size: 18px;
+                padding: 10px;
+            }
+
+            .buttons button {
+                height: 50px;
+                width: 50px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .name {
+                font-size: 20px;
+            }
+
+            .display {
+                height: 45px;
+                font-size: 16px;
+                padding: 8px;
+            }
+
+            .buttons button {
+                height: 45px;
+                width: 45px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <div class="calculator">
+        <div class="name">Бобик Калькулятор</div>
+        <div class="mode-toggle">
+            <button id="paws-mode" class="active">Лапы 🐾</button>
+            <button id="nose-mode">Нос 🐶</button>
+            <button id="teeth-mode">Зубы 🦷
+                <span class="beta-badge">Beta</span>
+            </button>
+            <button id="binary-mode">Хвост 🔢
+                <span class="beta-badge">Beta</span>
+            </button> <!-- Новый режим "Бинарный" -->
+            <button id="ai-mode">Bark 🐶
+                <span class="beta-badge">Beta</span>
+            </button>
+        </div>
+        <div class="paws-mode">
+            <input type="text" class="display" id="display" disabled>
+            <div class="buttons">
+                <button class="clear" onclick="clearDisplay()">C</button>
+                <button class="operation" onclick="backspace()">←</button>
+                <button class="operation" onclick="toggleSign()">+/-</button>
+                <button class="operation" onclick="appendToDisplay(':')">:</button>
+                <button class="digit" onclick="appendToDisplay('7')">7</button>
+                <button class="digit" onclick="appendToDisplay('8')">8</button>
+                <button class="digit" onclick="appendToDisplay('9')">9</button>
+                <button class="operation" onclick="appendToDisplay('x')">x</button>
+                <button class="digit" onclick="appendToDisplay('4')">4</button>
+                <button class="digit" onclick="appendToDisplay('5')">5</button>
+                <button class="digit" onclick="appendToDisplay('6')">6</button>
+                <button class="operation" onclick="appendToDisplay('-')">-</button>
+                <button class="digit" onclick="appendToDisplay('1')">1</button>
+                <button class="digit" onclick="appendToDisplay('2')">2</button>
+                <button class="digit" onclick="appendToDisplay('3')">3</button>
+                <button class="operation" onclick="appendToDisplay('+')">+</button>
+                <button class="digit" onclick="appendToDisplay('0')">0</button>
+                <button class="digit" onclick="appendToDisplay('00')">00</button>
+                <button class="digit" onclick="appendToDisplay('.')">.</button>
+                <button class="operation" onclick="calculate()">=</button>
+                <button class="operation" onclick="calculateSqrt()">√</button>
+                <button class="operation" onclick="calculatePercent()">%</button>
+                <button class="operation" onclick="appendToDisplay('3,14')">π</button>
+            </div>
+        </div>
+        <div class="nose-mode">
+            <canvas id="canvas" width="280" height="280" style="border: 2px solid; cursor: crosshair;"></canvas>
+            <button onclick="canvas.erase()">Очистить</button>
+            <button onclick="recognize()">Распознать</button>
+            <button onclick="calculateRecognized()">Вычислить</button>
+            <div class="result-container">
+                <div id="recognition-result"></div>
+                <div id="calculation-result"></div>
+            </div>
+        </div>
+        <div class="teeth-mode" style="display: none;">
+            <input type="text" class="display" id="teeth-display" disabled>
+            <div class="buttons">
+                <button class="clear" onclick="clearTeethDisplay()">C</button>
+                <button class="operation" onclick="backspaceTeeth()">←</button>
+                <button class="operation" onclick="toggleTeethSign()">+/-</button>
+                <button class="operation" onclick="appendToTeethDisplay('3.14')">π</button>
+                <button class="digit" onclick="appendToTeethDisplay('7')">7</button>
+                <button class="digit" onclick="appendToTeethDisplay('8')">8</button>
+                <button class="digit" onclick="appendToTeethDisplay('9')">9</button>
+                <button class="operation" onclick="appendToTeethDisplay(':')">:</button>
+                <button class="digit" onclick="appendToTeethDisplay('4')">4</button>
+                <button class="digit" onclick="appendToTeethDisplay('5')">5</button>
+                <button class="digit" onclick="appendToTeethDisplay('6')">6</button>
+                <button class="operation" onclick="appendToTeethDisplay('x')">x</button>
+                <button class="digit" onclick="appendToTeethDisplay('1')">1</button>
+                <button class="digit" onclick="appendToTeethDisplay('2')">2</button>
+                <button class="digit" onclick="appendToTeethDisplay('3')">3</button>
+                <button class="operation" onclick="appendToTeethDisplay('-')">-</button>
+                <button class="digit" onclick="appendToTeethDisplay('0')">0</button>
+                <button class="digit" onclick="appendToTeethDisplay('00')">00</button>
+                <button class="digit" onclick="appendToTeethDisplay(',')">,</button>
+                <button class="operation" onclick="appendToTeethDisplay('+')">+</button>
+                <button class="operation" onclick="appendToTeethDisplay('&')">AND (&)</button>
+                <button class="operation" onclick="appendToTeethDisplay('|')">OR (|)</button>
+                <button class="operation" onclick="appendToTeethDisplay('^')">XOR (^)</button>
+                <button class="operation" onclick="appendToTeethDisplay('~')">NOT (~)</button>
+                <button class="operation" onclick="calculateSquare()">x²</button>
+                <button class="operation" onclick="calculateCube()">x³</button>
+                <button class="operation" onclick="calculateSqrt()">√</button>
+                <button class="operation" onclick="calculateTeeth()">=</button>
+            </div>
+        </div>
+        <div class="binary-mode" style="display: none;">
+            <input type="text" class="display" id="binary-display" disabled>
+            <div class="buttons">
+                <button class="clear" onclick="clearBinaryDisplay()">C</button>
+                <button class="operation" onclick="backspaceBinary()">←</button>
+                <button class="operation" onclick="toggleBinarySign()">+/-</button>
+                <button class="operation" onclick="appendToBinaryDisplay('+')">+</button>
+                <button class="digit" onclick="appendToBinaryDisplay('1')">1</button>
+                <button class="digit" onclick="appendToBinaryDisplay('0')">0</button>
+                <button class="operation" onclick="appendToBinaryDisplay('-')">-</button>
+                <button class="operation" onclick="appendToBinaryDisplay('*')">*</button>
+                <button class="operation" onclick="appendToBinaryDisplay('/')">/</button>
+                <button class="operation" onclick="calculateBinary()">=</button>
+            </div>
+            <div class="result-container">
+                <div id="binary-result"></div>
+            </div>
+        </div>
+        <div class="ai-mode" style="display: none;">
+            <div class="barkgpt-maths">BarkGPT Maths</div>
+            <div class="chat-container">
+                <input type="text" id="chat-input" placeholder="Введите ваш запрос">
+                <button onclick="sendMessage()">Отправить</button>
+                <div class="chat-messages" id="chat-messages"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.chenyuho.com/project/handwritingjs/handwriting.canvas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.1.0/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/algebrite/1.2.0/algebrite.bundle.min.js"></script>
+    <script scr="script.js"></script>
+</body>
+</html>
